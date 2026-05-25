@@ -247,10 +247,19 @@
 ### 완료 파일
 - `docs/DESIGN_HANDOFF.md` — 두 surface(claude.ai 디자인 ↔ Claude Code) 공유 계약. 스코프(IN/OUT),
   동결 props 인벤토리(14개 컴포넌트), 도메인 UX 불변 규칙, 현행 토큰 인벤토리, 결정 항목(D1~D3),
-  baseline 스크린샷 세트 명세, 핸드백 포맷, Session 5 통합·검증 체크리스트 포함.
+  baseline 스크린샷 세트(파일명 매핑)·재캡처 방법, 핸드백 포맷, Session 5 통합·검증 체크리스트 포함.
+- `scripts/capture-baseline.mjs` — Playwright fullPage 캡처 스크립트. 라우트×뷰포트(+CAPTURE_DARK 옵션)
+  반복 캡처. Session 5 before/after 시각 회귀에도 재사용.
+- `docs/design/baseline/*.png` — baseline 5종(아래) 실제 생성.
 
-### baseline 스크린샷 (Session 4 대화 transcript에 캡처 — claude.ai 첨부용)
-- /dashboard 1280·375, /input 1280(시나리오1 입력 후)·375(빈 상태), /dashboard ~800(폴백) 총 5종.
+### baseline 스크린샷 (docs/design/baseline/, claude.ai 첨부용)
+- `dashboard-desktop-1280.png` / `dashboard-mobile-375.png` / `dashboard-tablet-800.png`
+- `input-desktop-1280.png`(시나리오1 입력 후) / `input-mobile-375.png`(빈 상태)
+- 현행 라이트 모드만(다크 미구현). 재캡처: `npx playwright install chromium` → `yarn dev` →
+  `node scripts/capture-baseline.mjs`.
+
+### 의존성
+- `playwright`(dev) 추가 — baseline/회귀 캡처 전용(런타임 영향 없음). 브라우저는 `npx playwright install chromium`.
 
 ### 확정된 스코프 조정 (사용자 결정)
 - 다크 모드를 **수동 토글**로 구현(테마 상태/영속 기능 코드 추가 허용) — 결정 D1.

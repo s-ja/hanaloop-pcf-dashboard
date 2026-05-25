@@ -97,15 +97,31 @@
 
 ## 7. Baseline 스크린샷 세트
 
-> 아래는 Session 4 대화에서 preview 도구로 캡처됨(현행 라이트 모드). claude.ai 디자인에 **이미지로 첨부**하여 실제 데이터 밀도를 보고 결정하게 함(PLANNING 10-2). 다크 모드는 미구현이라 라이트만 존재 — 디자인이 다크 시안을 새로 생성.
+> 현행 라이트 모드 baseline. claude.ai 디자인에 **이미지로 첨부**하여 실제 데이터 밀도를 보고 결정하게 함(PLANNING 10-2). 다크 모드는 미구현이라 라이트만 존재 — 디자인이 다크 시안을 새로 생성.
+> 파일은 `scripts/capture-baseline.mjs`(Playwright, fullPage)로 생성하며 `docs/design/baseline/`에 둠.
 
-| # | 라우트 | 뷰포트 | 상태 | 관찰 포인트 |
+| 파일 (`docs/design/baseline/`) | 라우트 | 뷰포트 | 상태 | 관찰 포인트 |
 |---|---|---|---|---|
-| 1 | /dashboard | 1280×900 | 2025 연간 | 2-col(Breakdown+Trend), Goal 바, 테이블 밀도 |
-| 2 | /dashboard | 375 (mobile) | 2025 연간 | 1-col 스택, 차트 비율 |
-| 3 | /input | 1280×900 | 시나리오1 입력 후(125 kWh→57) | 2-col(폼 좌·프리뷰 우), 요약/바/테이블 |
-| 4 | /input | 375 (mobile) | 빈 상태 | 폼 스택, disabled 제출, 빈 프리뷰 |
-| 5 | /dashboard | ~800 (tablet 폴백) | 2025 연간 | lg 미적용 시 1-col 폴백 확인 |
+| `dashboard-desktop-1280.png` | /dashboard | 1280×900 | 2025 연간 | 2-col(Breakdown+Trend), Goal 바, 테이블 밀도 |
+| `dashboard-mobile-375.png` | /dashboard | 375×812 | 2025 연간 | 1-col 스택, 차트 비율 |
+| `dashboard-tablet-800.png` | /dashboard | 800×1000 | 2025 연간 | lg 미적용 시 1-col 폴백 확인 |
+| `input-desktop-1280.png` | /input | 1280×900 | 시나리오1 입력 후(125 kWh→57) | 2-col(폼 좌·프리뷰 우), 요약/바/테이블 |
+| `input-mobile-375.png` | /input | 375×812 | 빈 상태 | 폼 스택, disabled 제출, 빈 프리뷰 |
+
+### 7-1. baseline 재캡처 방법 (`scripts/capture-baseline.mjs`)
+```bash
+# 최초 1회: Playwright 브라우저 설치 (playwright dev 의존성은 설치됨)
+npx playwright install chromium
+
+# 앱 실행 후 캡처
+yarn dev                                  # 또는 yarn build && yarn start (http://localhost:3000)
+node scripts/capture-baseline.mjs         # → docs/design/baseline/*.png (fullPage)
+
+# 옵션
+BASE_URL=http://localhost:3001 node scripts/capture-baseline.mjs   # 포트 변경
+CAPTURE_DARK=1 node scripts/capture-baseline.mjs                   # *-dark.png 추가 (Session 5 다크 구현 후 의미)
+```
+> Session 5 통합 시 동일 스크립트로 before/after(+`CAPTURE_DARK=1`)를 재캡처해 시각 회귀를 비교한다.
 
 ---
 
