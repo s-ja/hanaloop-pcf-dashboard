@@ -69,10 +69,10 @@ function BreakdownTooltip({
   const ratio = total > 0 ? datum.value / total : 0;
 
   return (
-    <div className="rounded-md border border-gray-200 bg-white px-3 py-2 text-xs shadow-md">
-      <p className="font-semibold text-gray-900">{datum.label}</p>
-      <p className="mt-0.5 text-gray-700">{formatEmission(datum.value)}</p>
-      <p className="text-gray-500">
+    <div className="rounded-md border border-[color:var(--chart-tooltip-border)] bg-[color:var(--chart-tooltip-bg)] px-3 py-2 text-xs shadow-[var(--shadow-pop)]">
+      <p className="font-semibold text-fg">{datum.label}</p>
+      <p className="mt-0.5 text-fg-muted">{formatEmission(datum.value)}</p>
+      <p className="text-fg-subtle">
         전체의 {formatPercent(ratio, { signed: false, fractionDigits: 1 })}
       </p>
     </div>
@@ -88,7 +88,7 @@ export default function EmissionBreakdownChart({
 
   if (total <= 0) {
     return (
-      <div className="flex h-64 items-center justify-center text-sm text-gray-400">
+      <div className="flex h-64 items-center justify-center text-sm text-fg-faint">
         표시할 배출 데이터가 없습니다.
       </div>
     );
@@ -116,7 +116,7 @@ export default function EmissionBreakdownChart({
             <Tooltip content={<BreakdownTooltip total={total} />} />
             <Legend
               formatter={(value) => (
-                <span className="text-sm text-gray-700">{value}</span>
+                <span className="text-sm text-fg-muted">{value}</span>
               )}
             />
           </PieChart>
@@ -127,18 +127,18 @@ export default function EmissionBreakdownChart({
           >
             <XAxis
               dataKey="label"
-              tick={{ fontSize: 12, fill: "#6b7280" }}
-              axisLine={{ stroke: "#e5e7eb" }}
+              tick={{ fontSize: 12, fill: "var(--chart-axis)" }}
+              axisLine={{ stroke: "var(--chart-grid)" }}
               tickLine={false}
             />
             <YAxis
-              tick={{ fontSize: 12, fill: "#6b7280" }}
-              axisLine={{ stroke: "#e5e7eb" }}
+              tick={{ fontSize: 12, fill: "var(--chart-axis)" }}
+              axisLine={{ stroke: "var(--chart-grid)" }}
               tickLine={false}
               width={56}
             />
             <Tooltip
-              cursor={{ fill: "rgba(0,0,0,0.04)" }}
+              cursor={{ fill: "var(--chart-grid)" }}
               content={<BreakdownTooltip total={total} />}
             />
             <Bar dataKey="value" radius={[4, 4, 0, 0]}>

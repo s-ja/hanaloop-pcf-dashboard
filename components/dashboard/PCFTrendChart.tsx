@@ -51,29 +51,29 @@ function TrendTooltip({
   const point = payload[0].payload;
 
   return (
-    <div className="rounded-md border border-gray-200 bg-white px-3 py-2 text-xs shadow-md">
-      <p className="font-semibold text-gray-900">
+    <div className="rounded-md border border-[color:var(--chart-tooltip-border)] bg-[color:var(--chart-tooltip-bg)] px-3 py-2 text-xs shadow-[var(--shadow-pop)]">
+      <p className="font-semibold text-fg">
         {formatPeriodLabel(point.period)}
       </p>
-      <p className="mt-1 font-medium text-gray-700">
+      <p className="mt-1 font-medium text-fg-muted">
         총 {formatEmission(point.totalPCF)}
       </p>
       <ul className="mt-1 space-y-0.5">
         {CATEGORY_ORDER.map((category) => (
-          <li key={category} className="flex items-center gap-1.5 text-gray-500">
+          <li key={category} className="flex items-center gap-1.5 text-fg-subtle">
             <span
               aria-hidden
               className="inline-block h-2 w-2 rounded-full"
               style={{ backgroundColor: CATEGORY_COLORS[category] }}
             />
             <span>{ActivityCategoryLabel[category]}</span>
-            <span className="ml-auto tabular-nums text-gray-700">
+            <span className="ml-auto font-mono tabular-nums text-fg-muted">
               {formatNumber(point.breakdown[category])}
             </span>
           </li>
         ))}
       </ul>
-      <p className="mt-1 text-[11px] text-gray-400">클릭하여 상세 보기</p>
+      <p className="mt-1 text-[11px] text-fg-faint">클릭하여 상세 보기</p>
     </div>
   );
 }
@@ -84,7 +84,7 @@ export default function PCFTrendChart({
 }: PCFTrendChartProps) {
   if (data.length === 0) {
     return (
-      <div className="flex h-72 items-center justify-center text-sm text-gray-400">
+      <div className="flex h-72 items-center justify-center text-sm text-fg-faint">
         표시할 트렌드 데이터가 없습니다.
       </div>
     );
@@ -105,17 +105,17 @@ export default function PCFTrendChart({
           onClick={handleClick}
           style={{ cursor: onPointClick ? "pointer" : "default" }}
         >
-          <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+          <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
           <XAxis
             dataKey="period"
             tickFormatter={monthTick}
-            tick={{ fontSize: 12, fill: "#6b7280" }}
-            axisLine={{ stroke: "#e5e7eb" }}
+            tick={{ fontSize: 12, fill: "var(--chart-axis)" }}
+            axisLine={{ stroke: "var(--chart-grid)" }}
             tickLine={false}
           />
           <YAxis
-            tick={{ fontSize: 12, fill: "#6b7280" }}
-            axisLine={{ stroke: "#e5e7eb" }}
+            tick={{ fontSize: 12, fill: "var(--chart-axis)" }}
+            axisLine={{ stroke: "var(--chart-grid)" }}
             tickLine={false}
             width={56}
             tickFormatter={(value: number) => formatNumber(value, 0)}
@@ -124,9 +124,9 @@ export default function PCFTrendChart({
           <Line
             type="monotone"
             dataKey="totalPCF"
-            stroke="#0f766e"
+            stroke="var(--chart-trend)"
             strokeWidth={2}
-            dot={{ r: 4, fill: "#0f766e" }}
+            dot={{ r: 4, fill: "var(--chart-trend)" }}
             activeDot={{ r: 7 }}
           />
         </LineChart>
