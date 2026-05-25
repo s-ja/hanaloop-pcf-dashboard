@@ -723,5 +723,5 @@ package-lock.json
 
 - 도메인 개념: `DOMAIN.md`
 - 사용자 분석: `USER_RESEARCH.md`
-- 과제 엑셀: `2026년_개발자_채용과제.xlsx` (과제 개요 / 과제용 데이터 / 지원자 체크리스트)
+- 과제 엑셀: https://docs.google.com/spreadsheets/d/10Z7fAalsK2pXKIu9iNdMw-0atC_p1ItG/edit?usp=sharing&ouid=102755298640144057289&rtpof=true&sd=true (과제 개요 / 과제용 데이터 / 지원자 체크리스트)
 - 하나루프: https://www.hanaloop.com/
