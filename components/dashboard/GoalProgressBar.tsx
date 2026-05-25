@@ -31,7 +31,7 @@ export default function GoalProgressBar({
   // 목표 미설정 — 빈 상태 처리
   if (!target || target <= 0) {
     return (
-      <div className="rounded-md border border-dashed border-gray-300 bg-gray-50 px-4 py-3 text-sm text-gray-500">
+      <div className="rounded-md border border-dashed border-border-strong bg-surface-2 px-4 py-3 text-sm text-fg-subtle">
         목표 PCF가 설정되지 않았습니다. 목표를 설정하면 진척도를 확인할 수 있습니다.
       </div>
     );
@@ -43,35 +43,40 @@ export default function GoalProgressBar({
   const nearLimit = ratio >= 0.75 && ratio <= 1;
 
   const barColor = exceeded
-    ? "bg-red-500"
+    ? "bg-[color:var(--color-goal-over)]"
     : nearLimit
-      ? "bg-amber-500"
-      : "bg-emerald-500";
+      ? "bg-[color:var(--color-goal-near)]"
+      : "bg-[color:var(--color-goal-ok)]";
   const statusText = exceeded
     ? "목표 초과"
     : nearLimit
       ? "목표 임박"
       : "목표 이내";
   const statusClass = exceeded
-    ? "text-red-600"
+    ? "text-[color:var(--color-goal-over)]"
     : nearLimit
-      ? "text-amber-600"
-      : "text-emerald-600";
+      ? "text-[color:var(--color-goal-near)]"
+      : "text-[color:var(--color-goal-ok)]";
 
   return (
     <div>
-      <div className="flex items-baseline justify-between gap-2 text-sm">
-        <span className="text-gray-700">
-          연간 누적 <span className="font-semibold">{formatEmission(current)}</span>
-          <span className="text-gray-400"> / 목표 {formatEmission(target)}</span>
+      <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 text-sm">
+        <span className="text-fg-muted">
+          연간 누적{" "}
+          <span className="font-mono font-semibold text-fg">
+            {formatEmission(current)}
+          </span>
+          <span className="text-fg-faint"> / 목표 </span>
+          <span className="font-mono text-fg-muted">{formatEmission(target)}</span>
         </span>
         <span className={`font-semibold ${statusClass}`}>
-          {formatPercent(ratio, { signed: false })} · {statusText}
+          <span className="font-mono">{formatPercent(ratio, { signed: false })}</span>{" "}
+          · {statusText}
         </span>
       </div>
 
       <div
-        className="mt-2 h-3 w-full overflow-hidden rounded-full bg-gray-100"
+        className="mt-2 h-3 w-full overflow-hidden rounded-full bg-surface-2 ring-1 ring-inset ring-border"
         role="progressbar"
         aria-valuenow={Math.round(ratio * 100)}
         aria-valuemin={0}

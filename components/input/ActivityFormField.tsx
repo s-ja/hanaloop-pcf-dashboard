@@ -47,7 +47,7 @@ export default function ActivityFormField({
 
   return (
     <div className="flex flex-col gap-1.5">
-      <label htmlFor={fieldId} className="text-sm font-medium text-gray-700">
+      <label htmlFor={fieldId} className="text-sm font-medium text-fg">
         {label}
       </label>
       {control}
@@ -55,7 +55,7 @@ export default function ActivityFormField({
         <p
           id={errorId}
           role="alert"
-          className="flex items-center gap-1 text-xs font-medium text-red-600"
+          className="flex items-center gap-1 text-xs font-medium text-[color:var(--color-up)]"
         >
           <span aria-hidden>⚠</span>
           {error}

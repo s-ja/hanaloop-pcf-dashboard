@@ -50,8 +50,8 @@ interface ActivityInputFormProps {
 
 /** 오류 시 빨강 테두리를 더하는 공통 입력 스타일 */
 const controlClass = (hasError: boolean): string =>
-  `rounded-md border px-3 py-2 text-sm text-gray-900 transition-colors focus:outline-none focus:ring-2 focus:ring-sky-500 disabled:bg-gray-50 disabled:text-gray-400 ${
-    hasError ? "border-red-400" : "border-gray-300"
+  `rounded-[var(--radius-control)] border bg-surface px-3 py-2 text-sm text-fg transition-colors placeholder:text-fg-faint focus:outline-none focus:ring-2 focus:ring-[color:var(--color-ring)] focus:border-[color:var(--color-ring)] disabled:bg-surface-2 disabled:text-fg-faint disabled:cursor-not-allowed ${
+    hasError ? "border-[color:var(--color-up)]" : "border-border-strong"
   }`;
 
 type FieldKey = "category" | "description" | "date" | "amount";
@@ -177,11 +177,11 @@ export default function ActivityInputForm({
 
       {/* 단위 — 카테고리에서 자동 표시(고정, 편집 불가) */}
       <ActivityFormField label="단위 (자동)">
-        <div className="flex h-[42px] items-center rounded-md border border-dashed border-gray-300 bg-gray-50 px-3">
+        <div className="flex h-[42px] items-center rounded-[var(--radius-control)] border border-dashed border-border-strong bg-surface-2 px-3">
           {unit ? (
             <UnitLabel unit={unit} />
           ) : (
-            <span className="text-xs text-gray-400">
+            <span className="text-xs text-fg-faint">
               카테고리를 선택하면 단위가 자동 표시됩니다.
             </span>
           )}
@@ -210,8 +210,8 @@ export default function ActivityInputForm({
 
       {/* 선택한 배출계수 출처/버전/Scope 노출 */}
       {selectedFactor && (
-        <div className="flex flex-wrap items-center gap-2 rounded-md bg-sky-50 px-3 py-2">
-          <span className="text-xs text-gray-500">적용 배출계수</span>
+        <div className="flex flex-wrap items-center gap-2 rounded-[var(--radius-control)] bg-[color:var(--color-info-soft)] px-3 py-2">
+          <span className="text-xs text-fg-muted">적용 배출계수</span>
           <EmissionFactorBadge
             version={selectedFactor.version}
             source={selectedFactor.source}

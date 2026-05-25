@@ -105,7 +105,7 @@ export default function InputPage() {
   if (isLoading) {
     return (
       <main className="mx-auto max-w-6xl px-4 py-10">
-        <p className="text-sm text-gray-500">데이터를 불러오는 중입니다…</p>
+        <p className="text-sm text-fg-muted">데이터를 불러오는 중입니다…</p>
       </main>
     );
   }
@@ -113,7 +113,7 @@ export default function InputPage() {
   if (error) {
     return (
       <main className="mx-auto max-w-6xl px-4 py-10">
-        <div className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div className="rounded-md border border-[color:var(--color-up)]/30 bg-[color:var(--color-up-soft)] px-4 py-3 text-sm text-[color:var(--color-up)]">
           데이터를 불러오지 못했습니다: {error.message}
         </div>
       </main>
@@ -121,11 +121,11 @@ export default function InputPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-50">
+    <main className="min-h-screen bg-bg">
       <div className="mx-auto max-w-6xl px-4 py-8">
         <header className="mb-6">
-          <h1 className="text-xl font-bold text-gray-900">데이터 입력</h1>
-          <p className="mt-1 text-sm text-gray-500">
+          <h1 className="text-xl font-bold text-fg">데이터 입력</h1>
+          <p className="mt-1 text-sm text-fg-subtle">
             활동 데이터를 입력하면 우측에서 PCF 프리뷰가 즉시 갱신됩니다.
           </p>
         </header>
@@ -137,7 +137,7 @@ export default function InputPage() {
               emissionFactors={EMISSION_FACTORS}
               onSubmit={handleSubmit}
             />
-            <p className="mt-4 text-xs text-gray-400">
+            <p className="mt-4 text-xs text-fg-faint">
               입력분은 이 화면에서만 즉시 프리뷰됩니다(새로고침 시 초기화). 영구
               저장과 대시보드 반영은 다음 단계(API) 과제입니다.
             </p>
@@ -151,10 +151,10 @@ export default function InputPage() {
                   <span className="text-3xl" aria-hidden>
                     📝
                   </span>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-fg-subtle">
                     아직 입력한 데이터가 없습니다.
                   </p>
-                  <p className="text-xs text-gray-400">
+                  <p className="text-xs text-fg-faint">
                     왼쪽에서 활동을 추가하면 해당 월의 PCF가 여기에 표시됩니다.
                   </p>
                 </div>
@@ -162,15 +162,17 @@ export default function InputPage() {
             ) : (
               <>
                 {/* 방금 입력 요약 */}
-                <div className="rounded-md border border-sky-200 bg-sky-50 px-4 py-3 text-sm">
-                  <p className="font-medium text-sky-900">방금 입력한 활동</p>
-                  <p className="mt-1 text-gray-700">
+                <div className="rounded-md border border-[color:var(--color-primary)]/30 bg-[color:var(--color-info-soft)] px-4 py-3 text-sm">
+                  <p className="font-medium text-[color:var(--color-primary-soft-fg)]">
+                    방금 입력한 활동
+                  </p>
+                  <p className="mt-1 text-fg-muted">
                     {formatPeriodLabel(previewPeriod!)} ·{" "}
                     {ActivityCategoryLabel[lastAdded.category]} ·{" "}
                     {lastAdded.description} · {formatNumber(lastAdded.amount)}{" "}
                     {lastAdded.unit}
                     {" → "}
-                    <span className="font-semibold text-sky-900">
+                    <span className="font-mono font-semibold text-[color:var(--color-primary-soft-fg)]">
                       {formatEmission(lastEmission)}
                     </span>
                   </p>
