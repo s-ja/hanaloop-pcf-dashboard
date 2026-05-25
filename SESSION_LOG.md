@@ -175,3 +175,64 @@
 4. **recharts SSR 주의**: 차트 컴포넌트는 'use client'. prerender 시 ResponsiveContainer width/height(-1)
    경고가 빌드 로그에 출력되나 동작/빌드에 영향 없음(클라이언트에서 정상 사이징).
 5. **계산기/타입/상수/mock-data 여전히 불변**. 표시·설정은 lib/dashboard-config, lib/period-utils 처럼 새 파일로 추가.
+
+---
+
+## Session 4 완료 (2026-05-25)
+
+### 완료 파일
+
+**입력 폼 보조 유틸 (순수 함수, 신규)**
+- `lib/input-helpers.ts` — 폼 옵션 도출 + 입력값 변환. 모두 EMISSION_FACTORS 에서 파생(하드코딩 없음).
+  - `getInputCategories` — 마스터의 카테고리 목록(중복 제거)
+  - `getSourceOptions(factors, category)` — 카테고리별 배출원(설명) 옵션
+  - `getUnitForCategory(factors, category)` — 배출계수 단위('kgCO₂e/kWh')의 '/' 뒤를
+    활동 단위로 추출 → 전기↔kWh 매핑조차 하드코딩하지 않음
+  - `toActivityData(input, id, createdAt)` — ActivityDataInput → ActivityData 조립(순수)
+
+**입력 컴포넌트 (components/input/, PLANNING 5-2 props 준수)**
+- `ActivityFormField.tsx` (**'use client'**) — label+컨트롤+에러 단위 래퍼. useId + cloneElement 로
+  단일 자식 컨트롤에 `id`/`aria-invalid`/`aria-describedby` 자동 연결, label `htmlFor` 결합.
+  에러는 색상+텍스트(⚠)+`role="alert"`(색맹 대비). 시그니처 `{ label, error?, children }` 유지.
+- `ActivityInputForm.tsx` (**'use client'**) — 카테고리→단위 자동 고정·표시(UnitLabel), 배출원
+  옵션은 input-helpers 로 파생, 선택 계수의 출처/버전/Scope 를 EmissionFactorBadge+ScopeTag 로 노출.
+  검증은 `validateActivityInput`만 호출(중복 규칙 없음), `hasActivityInputErrors`로 제출 버튼 비활성 제어,
+  에러는 blur/제출 시 노출. 제출 시 productId=DEFAULT_PRODUCT_ID, emissionFactorId 해석해 onSubmit 위임 후 리셋.
+
+**페이지 조립/상태 (신규)**
+- `app/input/page.tsx` (**'use client'**) — usePCFData 로드 + 이번 세션 입력분을 페이지 레벨
+  `addedActivities: ActivityData[]` 로 보관(id/createdAt 은 제출 시 `crypto.randomUUID()`+ISO now).
+  "기존 mock + 입력분"을 합쳐(`combined`) 최근 입력 월을 usePCFCalculation 으로 계산 → 단건 배출량 콜아웃 +
+  PCFSummaryCard(전월 대비) + EmissionBreakdownChart + ActivityTable 로 즉시 프리뷰. 로딩/에러/빈 상태 처리.
+  **mock-data 불변**(합치기만), 새로고침 시 입력분 초기화 — Phase 2 영속화 경계를 화면 주석으로 명시.
+
+**내비게이션 (신규)**
+- `components/shared/AppNav.tsx` (**'use client'**) — usePathname 으로 현재 경로 강조하는 /dashboard↔/input 링크.
+- `app/layout.tsx` — body 최상단에 `<AppNav />` 삽입(두 페이지 일관 적용).
+
+**테스트**
+- `tests/input-helpers.test.ts` (6건) — 옵션 도출(카테고리/배출원/단위 파생)·toActivityData 검증.
+
+### 검증 결과 (완료 조건 전부 달성)
+
+- ✅ `yarn build` 성공(TypeScript 통과). `/`, `/dashboard`, `/input` prerender(static).
+- ✅ `yarn start` clean(포트 3000 선점 해제 후) → `/` 307 → `/dashboard` 200, `/input` 200.
+- ✅ **김환경 주임 시나리오 1**(브라우저 검증): ① "전기" 선택 → 단위 `kWh` 자동 표시, "한국전력" 선택 시
+  "KEPCO-2025" 배지 + Scope 2 노출 ② 2025-09-01 / 125 입력 → 에러 없음 ③ 제출 → "125 kWh → 57 kgCO₂e"
+  단건 배출 + 2025년 9월 총 PCF 57 kgCO₂e, **전월(8월) 대비 ↓-94%** 표시, 카테고리 차트·9월 활동 테이블 갱신.
+- ✅ **에러 메시지 검증**(체크리스트 필수): 활동량 -5 입력+blur → "활동량은 0보다 커야 합니다."
+  필드 에러 + `aria-invalid="true"` + `aria-describedby` 로 메시지 연결 확인. 검증은 전적으로 validateActivityInput 사용.
+- ✅ 단위 표기 `kgCO₂e` 일관(@/lib/format), Scope/단위/계수 배지·Button·Card 는 Session 2/3 공유 컴포넌트 재사용.
+- ✅ `yarn lint` clean, `yarn test` 46/46 통과(기존 40 + 신규 6). 콘솔 에러 없음.
+
+### 다음 세션 주의사항 (Phase 2 — API Routes)
+
+1. **크로스 페이지 동기화는 Phase 2 과제**: /input 입력분은 현재 페이지 인메모리 상태로만 프리뷰되고
+   /dashboard 에 반영되지 않음. api-client + POST(app/api/activities) 도입 시 usePCFData 내부만 교체하면
+   두 페이지가 동일 소스를 공유하게 됨(usePCFData 시그니처 불변 유지).
+2. **제출 분기점**: ActivityInputForm.onSubmit 은 ActivityDataInput 을 그대로 위임함. Phase 2 에서는
+   페이지의 `setAddedActivities` 대신 `apiClient.createActivity(input)` 호출로 교체(폼 props 불변).
+3. **ActivityFormField 의 cloneElement 전제**: 자식은 단일 폼 컨트롤이어야 a11y 속성이 올바른 요소에
+   주입됨(이번에 단위 suffix div 래핑 → 라벨에 단위 표기로 변경한 이유). 새 필드 추가 시 이 전제 준수.
+4. **계산기/타입/상수/mock-data 여전히 불변**. 입력 보조는 lib/input-helpers 처럼 새 파일로만 추가.
+5. **신규 패키지 추가 없음** — 의존성 변화 없이 완료.
