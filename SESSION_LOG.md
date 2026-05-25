@@ -236,3 +236,32 @@
    주입됨(이번에 단위 suffix div 래핑 → 라벨에 단위 표기로 변경한 이유). 새 필드 추가 시 이 전제 준수.
 4. **계산기/타입/상수/mock-data 여전히 불변**. 입력 보조는 lib/input-helpers 처럼 새 파일로만 추가.
 5. **신규 패키지 추가 없음** — 의존성 변화 없이 완료.
+
+---
+
+## Session 5 사전 준비 — 디자인 핸드오프 0단계 (2026-05-26)
+
+> Session 5(디자인 통합) 본 작업은 별도 Claude Code 대화에서 진행. 본 항목은 그 전 단계인
+> "핸드오프 계약 패키징"(Claude Code → claude.ai 디자인 전달용) 결과만 기록한다.
+
+### 완료 파일
+- `docs/DESIGN_HANDOFF.md` — 두 surface(claude.ai 디자인 ↔ Claude Code) 공유 계약. 스코프(IN/OUT),
+  동결 props 인벤토리(14개 컴포넌트), 도메인 UX 불변 규칙, 현행 토큰 인벤토리, 결정 항목(D1~D3),
+  baseline 스크린샷 세트 명세, 핸드백 포맷, Session 5 통합·검증 체크리스트 포함.
+
+### baseline 스크린샷 (Session 4 대화 transcript에 캡처 — claude.ai 첨부용)
+- /dashboard 1280·375, /input 1280(시나리오1 입력 후)·375(빈 상태), /dashboard ~800(폴백) 총 5종.
+
+### 확정된 스코프 조정 (사용자 결정)
+- 다크 모드를 **수동 토글**로 구현(테마 상태/영속 기능 코드 추가 허용) — 결정 D1.
+- recharts 차트 색 **토큰화** 허용(축/그리드/카테고리 색을 CSS 변수에서 읽음) — 결정 D3.
+- 위 둘 외에는 "스타일/표시 토큰 교체"로 한정. 계산·검증·데이터·props·라우팅은 불변.
+
+### 환경 메모
+- PR #1 머지로 `@vercel/analytics`가 package.json/layout.tsx에 반영됨 → `yarn install`로 node_modules 동기화
+  완료(미설치 시 빌드 실패). 신규 추가가 아닌 선언된 의존성 설치.
+
+### Session 5(본 작업) 진입 조건
+1. 1단계(claude.ai 디자인)에서 @theme 토큰 세트(라이트/다크)·컴포넌트 className 스니펫·상태/반응형 시안 수령.
+2. 새 대화는 CLAUDE.md 선행 순서대로 docs 3종 + 본 SESSION_LOG + `docs/DESIGN_HANDOFF.md`를 읽고 2단계 착수.
+3. D2(모바일 ActivityTable 방식)는 디자인 시안 수령 후 확정.
