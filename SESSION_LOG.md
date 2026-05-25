@@ -107,3 +107,71 @@
 4. **Button/PeriodFilter 는 클라이언트 컴포넌트** — 서버 컴포넌트 페이지에서 직접 렌더 가능하나
    상태는 페이지 레벨로 끌어올릴 것(Lift State Up).
 5. **신규 패키지 추가 없음** — 의존성 변화 없이 완료. recharts 는 여전히 미설치(차트 세션 범위).
+
+---
+
+## Session 3 완료 (2026-05-25)
+
+### 완료 파일
+
+**의존성**
+- `recharts@3.8.1` 추가 (PLANNING 6-1-3 확정 차트 라이브러리). 그 외 신규 패키지 없음.
+
+**데이터/계산 경계 (hooks/)**
+- `hooks/usePCFData.ts` (**'use client'**) — 데이터 소스 추상화. mock-data 반환 +
+  `{ activities, products, isLoading, error }` 시그니처로 Phase 2 api-client 전환 대비.
+- `hooks/usePCFCalculation.ts` (**'use client'**) — `useMemo`로 current/previous/annual/trend
+  메모. 계산은 전적으로 `lib/pcf-calculator`에 위임, 배출계수는 `EMISSION_FACTORS` 주입.
+
+**표시 보조 유틸 (순수 함수)**
+- `lib/period-utils.ts` — `getPreviousPeriod`(증감 비교용), `isYearlyPeriod`, `getYearOfPeriod`,
+  `buildDashboardPeriodOptions`(데이터 존재 기간만 필터 옵션 구성).
+- `lib/dashboard-config.ts` — `DEMO_ANNUAL_TARGET_PCF`(12,000), `CATEGORY_COLORS`, `CATEGORY_ORDER`.
+  **표시 계층 전용** — 배출계수 등 도메인 값은 두지 않음.
+
+**대시보드 컴포넌트 (components/dashboard/, PLANNING 5-1 props 준수)**
+- `PCFSummaryCard.tsx` (서버) — 총 PCF + 증감(↑/↓ 색상+아이콘, 색맹 대비). previous=0 시 '—'.
+- `EmissionBreakdownChart.tsx` (**'use client'**) — recharts 파이/바, hover tooltip 정확 수치+비율.
+- `PCFTrendChart.tsx` (**'use client'**) — 월별 라인, 포인트 클릭 → `onPointClick(period)`.
+  recharts 3 의 onClick 은 `activeLabel`(=dataKey 'period')을 제공 → 이를 사용.
+- `GoalProgressBar.tsx` (서버) — 연간 목표 게이지. target 부재 시 빈 상태, 초과=빨강/임박=노랑/이내=초록.
+- `ActivityTable.tsx` (서버) — 개별 활동 + 합계 행(합산값). ScopeTag·UnitLabel·EmissionFactorBadge 재사용,
+  행별 배출량은 `calculateActivityEmission`, 계수 조회는 `findEmissionFactor`.
+
+**페이지 조립/라우팅**
+- `app/dashboard/page.tsx` (**'use client'**) — selectedPeriod·chartType 페이지 레벨 보유(Lift State Up).
+  PeriodFilter + 트렌드 클릭이 Summary/Breakdown/Table 동기화. 레이아웃: Summary→Breakdown+Trend→Goal→Table.
+- `app/page.tsx` — `/` → `/dashboard` 리다이렉트(보일러플레이트 교체).
+- `app/layout.tsx` — metadata title/description 갱신("HanaLoop PCF Dashboard").
+
+**임시 라우트 제거**
+- `app/test/page.tsx` 및 `app/test/` 디렉토리 **삭제** (Session 2 임시 검증용. 대시보드가 공유 컴포넌트를 실사용하므로 제거).
+
+**테스트**
+- `tests/period-utils.test.ts` (8건) — getPreviousPeriod(연/월 경계 포함)·옵션 구성 검증.
+
+**기타**
+- `.claude/launch.json` — preview 용 dev 서버 구성(`pcf-dev`, port 3000).
+
+### 검증 결과 (완료 조건 전부 달성)
+
+- ✅ `yarn build` 성공(TypeScript 통과). `/`, `/dashboard` prerender.
+- ✅ `yarn start` clean 실행(포트 3000 선점 해제 후) → `/` 307 리다이렉트 → `/dashboard` 200.
+- ✅ **이탄소 이사 시나리오**: 진입 즉시 ① 총 PCF(연간 11,022.564 kgCO₂e) ② 카테고리 파이 ③ 월별 트렌드가 한 화면.
+- ✅ **드릴다운**: 트렌드 5월 포인트 클릭 → selectedPeriod='2025-05' 갱신 → Breakdown/Summary/Table 동기화 확인(브라우저 검증).
+  5월 합산+개별 행(전기 120+101, 플라스틱1 424+232, 트럭 123+12) 테이블에 모두 표시.
+- ✅ 차트 인터랙티브(hover tooltip 정확 수치), 단위 `kgCO₂e` 일관(`@/lib/format`).
+- ✅ 연간 목표 진척도: 11,022.564 / 12,000 = 92% '목표 임박'(amber). target 부재 시 빈 상태 처리도 구현.
+- ✅ `yarn lint` clean, `yarn test` 40/40 통과(기존 32 + 신규 8).
+
+### 다음 세션 주의사항 (Session 4 — /input)
+
+1. **공유 컴포넌트 재사용**: `validateActivityInput`/`hasActivityInputErrors`(lib/validators), ScopeTag·UnitLabel·
+   EmissionFactorBadge, Button·Card 그대로 사용. 폼 검증 에러 메시지는 체크리스트 필수 항목.
+2. **데이터 흐름**: `usePCFData` 가 현재 mock 반환(즉시 resolve, 읽기 전용). 입력 추가는 Phase 1 범위상
+   클라이언트 상태로만 프리뷰하거나 Session 범위 확정 필요(api-client/POST 는 Phase 2). 입력 즉시 PCF 프리뷰는
+   `calculatePCF`/`usePCFCalculation` 재사용 가능.
+3. **PeriodFilter `options`**: 대시보드는 `buildDashboardPeriodOptions(trend)`로 실제 데이터 기간만 노출.
+4. **recharts SSR 주의**: 차트 컴포넌트는 'use client'. prerender 시 ResponsiveContainer width/height(-1)
+   경고가 빌드 로그에 출력되나 동작/빌드에 영향 없음(클라이언트에서 정상 사이징).
+5. **계산기/타입/상수/mock-data 여전히 불변**. 표시·설정은 lib/dashboard-config, lib/period-utils 처럼 새 파일로 추가.
