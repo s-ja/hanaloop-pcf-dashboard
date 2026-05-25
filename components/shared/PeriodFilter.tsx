@@ -39,12 +39,12 @@ export default function PeriodFilter({
   options = DEFAULT_OPTIONS,
 }: PeriodFilterProps) {
   return (
-    <label className="inline-flex items-center gap-2 text-sm text-gray-700">
-      <span className="text-gray-500">기간</span>
+    <label className="inline-flex items-center gap-2 text-sm text-fg-muted">
+      <span className="text-fg-subtle">기간</span>
       <select
         value={selected}
         onChange={(e) => onChange(e.target.value)}
-        className="rounded-md border border-gray-300 bg-white px-2 py-1 text-sm text-gray-900 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
+        className="rounded-[var(--radius-control)] border border-border-strong bg-surface px-2.5 py-1.5 text-sm text-fg focus:border-[color:var(--color-ring)] focus:outline-none focus:ring-1 focus:ring-[color:var(--color-ring)]"
       >
         {options.map((period) => (
           <option key={period} value={period}>

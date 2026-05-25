@@ -18,10 +18,12 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const VARIANT_CLASS: Record<ButtonVariant, string> = {
-  primary: "bg-sky-600 text-white hover:bg-sky-700 disabled:bg-sky-300",
+  primary:
+    "bg-primary text-primary-fg hover:bg-primary-hover disabled:bg-primary/40 disabled:text-primary-fg/70",
   secondary:
-    "bg-white text-gray-800 border border-gray-300 hover:bg-gray-50 disabled:text-gray-400",
-  ghost: "bg-transparent text-gray-700 hover:bg-gray-100 disabled:text-gray-400",
+    "bg-surface text-fg border border-border-strong hover:bg-surface-2 disabled:text-fg-faint",
+  ghost:
+    "bg-transparent text-fg-muted hover:bg-surface-2 hover:text-fg disabled:text-fg-faint",
 };
 
 const SIZE_CLASS: Record<ButtonSize, string> = {
@@ -39,7 +41,7 @@ export default function Button({
   return (
     <button
       type={type}
-      className={`inline-flex items-center justify-center gap-1.5 rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-1 disabled:cursor-not-allowed ${VARIANT_CLASS[variant]} ${SIZE_CLASS[size]} ${className}`}
+      className={`inline-flex items-center justify-center gap-1.5 rounded-[var(--radius-control)] font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--color-bg)] disabled:cursor-not-allowed ${VARIANT_CLASS[variant]} ${SIZE_CLASS[size]} ${className}`}
       {...props}
     />
   );

@@ -24,13 +24,28 @@ export default function EmissionFactorBadge({
   return (
     <span
       title={`출처: ${source} · 버전: ${version} · 유효 시작: ${validFrom}`}
-      className="inline-flex items-center gap-1.5 rounded-md border border-gray-200 bg-gray-50 px-2 py-0.5 text-xs text-gray-600"
+      className="inline-flex items-center gap-1.5 rounded-md border border-border bg-surface-2 px-2 py-0.5 text-xs text-fg-muted"
     >
-      <span aria-hidden>🏷️</span>
-      <span className="font-medium text-gray-800">{source}</span>
-      <span className="text-gray-400">·</span>
+      {/* 🏷️ 이모지 → 인라인 SVG (다크 모드 색·폰트 폴백 영향 제거) */}
+      <svg
+        aria-hidden
+        viewBox="0 0 12 12"
+        width="11"
+        height="11"
+        fill="none"
+        className="shrink-0"
+      >
+        <path
+          d="M6.5 1.5h3a1 1 0 0 1 1 1v3a1 1 0 0 1-.29.71l-4.5 4.5a1 1 0 0 1-1.42 0L1.79 7.21a1 1 0 0 1 0-1.42l4.5-4.5a1 1 0 0 1 .21-.29Z"
+          stroke="currentColor"
+          strokeWidth="1"
+        />
+        <circle cx="8.25" cy="3.75" r="0.75" fill="currentColor" />
+      </svg>
+      <span className="font-medium text-fg">{source}</span>
+      <span className="text-fg-faint">·</span>
       <span className="font-mono">{version}</span>
-      <span className="text-gray-400">·</span>
+      <span className="text-fg-faint">·</span>
       <span>{`${formatPeriodLabel(validFrom.slice(0, 7))}~`}</span>
     </span>
   );

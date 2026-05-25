@@ -26,11 +26,18 @@ import type { ActivityCategory } from "@/types";
  */
 export const DEMO_ANNUAL_TARGET_PCF = 12_000;
 
-/** 카테고리별 차트 색상 (표시 전용 토큰) */
+/**
+ * 카테고리별 차트 색상 (표시 전용 토큰).
+ *
+ * D3(docs/DESIGN_HANDOFF.md): hex 직접 지정 대신 app/globals.css 의 CSS 변수
+ * (--chart-cat-*)를 참조합니다. 다크 토글 시 변수 캐스케이드로 색이 즉시
+ * 전환되며, recharts 의 fill/stroke 와 DOM 인라인 style 양쪽에서 동작합니다.
+ * 색의 '의미'(전기↔S2 sky, 원소재↔S3↑ emerald, 운송 amber)는 변수에서 유지됩니다.
+ */
 export const CATEGORY_COLORS: Record<ActivityCategory, string> = {
-  electricity: "#0284c7", // sky-600 — Scope 2
-  material: "#059669", // emerald-600 — Scope 3 업스트림
-  transport: "#d97706", // amber-600 — Scope 3 업스트림
+  electricity: "var(--chart-cat-electricity)", // = S2 sky 계열
+  material: "var(--chart-cat-material)", // = S3↑ emerald 계열
+  transport: "var(--chart-cat-transport)", // amber
 };
 
 /** 차트 범례/표 표시용 카테고리 순서 (큰 기여 → 작은 기여 경향) */

@@ -13,7 +13,7 @@ interface UnitLabelProps {
 
 export default function UnitLabel({ unit }: UnitLabelProps) {
   return (
-    <span className="font-mono text-xs text-gray-500" aria-label={`단위 ${unit}`}>
+    <span className="font-mono text-xs text-fg-subtle" aria-label={`단위 ${unit}`}>
       {unit}
     </span>
   );

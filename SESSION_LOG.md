@@ -274,3 +274,65 @@
 1. 1단계(claude.ai 디자인)에서 @theme 토큰 세트(라이트/다크)·컴포넌트 className 스니펫·상태/반응형 시안 수령.
 2. 새 대화는 CLAUDE.md 선행 순서대로 docs 3종 + 본 SESSION_LOG + `docs/DESIGN_HANDOFF.md`를 읽고 2단계 착수.
 3. D2(모바일 ActivityTable 방식)는 디자인 시안 수령 후 확정.
+
+---
+
+## Session 5 완료 (2026-05-26) — 디자인 시스템 통합
+
+> claude.ai 디자인 핸드오프 번들(`Design System.html` + `src/theme.css` + 컴포넌트
+> className 스니펫)을 수령해 2단계(통합)를 수행. **스타일/표시 토큰 교체 + D1 다크
+> 토글 + D2 모바일 카드 + D3 차트 토큰화**에 한정 — 계산/검증/데이터/타입/props/라우팅 불변.
+
+### 완료 파일
+
+**토큰/폰트 (신규 토큰 세트)**
+- `app/globals.css` — 디자인 `src/theme.css` 전체 이식. `:root`/`.dark` 라이트·다크 페어
+  (surface/text/primary/semantic/scope/goal/chart/radius/shadow) + `@custom-variant dark` +
+  `@theme inline` 노출. 폰트(Pretendard Variable·JetBrains Mono)는 CSS `@import url(...)` CDN 로드
+  (JSX `<link>` 대신 — no-page-custom-font 경고 회피).
+- `app/layout.tsx` — Geist(next/font) 제거. `<head>`에 FOUC 방지 인라인 스크립트(paint 이전
+  `localStorage`/`prefers-color-scheme` 기준 `.dark` 적용), `<html suppressHydrationWarning lang="ko">`.
+
+**D1 — 다크 모드 수동 토글**
+- `components/shared/AppNav.tsx` — 우측 아이콘 버튼(해/달 SVG) 토글. 테마는 `<html>.dark`(외부
+  시스템)를 단일 출처로 `useSyncExternalStore`로 읽어 SSR/하이드레이션 불일치·setState-in-effect
+  없이 동기화. 토글 시 DOM 갱신 + `localStorage` 영속 + 커스텀 이벤트로 재렌더. **props 없음 유지**.
+
+**D3 — recharts 색 토큰화**
+- `lib/dashboard-config.ts` — `CATEGORY_COLORS` hex → `var(--chart-cat-*)` 참조(SVG fill·DOM style
+  양쪽 동작, 의미 유지).
+- `EmissionBreakdownChart.tsx` / `PCFTrendChart.tsx` — Cell/Line/dot fill·stroke, XAxis/YAxis tick·
+  axisLine, CartesianGrid, 툴팁 배경/보더를 `var(--chart-*)`·토큰 utility로. 다크 토글 시 변수
+  캐스케이드로 즉시 재색상.
+
+**D2 — 모바일 ActivityTable**
+- `ActivityTable.tsx` — `hidden md:block` 테이블 + `md:hidden` 카드형 리스트 동시 제공(권장안).
+  동일 `rows`/`total` 사용, **props(`activities`,`period`) 불변** — 표시만 분기.
+
+**className 토큰화 (로직 무변경, 시그니처 동결)**
+- `ui/Button.tsx`(variant→primary/surface/ghost 토큰), `ui/Card.tsx`, `shared/UnitLabel.tsx`,
+  `shared/PeriodFilter.tsx`, `shared/EmissionFactorBadge.tsx`(🏷️ 이모지 → 인라인 SVG, 다크 색
+  폴백 방지), `shared/ScopeTag.tsx`(SCOPE_CONFIG className → `var(--scope-*)`, 색 의미 고정),
+  `dashboard/PCFSummaryCard.tsx`(증감 색 `--color-up`/`--color-down`, 수치 mono),
+  `dashboard/GoalProgressBar.tsx`(`--color-goal-*`), `input/ActivityFormField.tsx`,
+  `input/ActivityInputForm.tsx`(controlClass 토큰), `app/dashboard/page.tsx`·`app/input/page.tsx`
+  (배경 `bg-bg`, 로딩/에러/빈/방금입력 상태 토큰).
+
+### 검증 결과 (완료 조건 전부 달성)
+- ✅ `yarn test` — 46/46 통과 (회귀 0, 계산/검증 로직 무변경).
+- ✅ `yarn lint` — clean (0 error / 0 warning). setState-in-effect·no-page-custom-font 모두 해소.
+- ✅ `yarn build` — 성공(TypeScript 통과). `/`, `/dashboard`, `/input` static prerender.
+  recharts width(-1) prerender 경고는 Session 3부터의 기존 사항(동작/빌드 영향 없음).
+- ✅ `yarn start` — `/` 200(307→/dashboard), `/dashboard` 200, `/input` 200.
+- ✅ 컴파일된 CSS에 폰트(pretendard·JetBrains+Mono)·토큰(`--color-bg`,`--chart-trend`) 정착 확인,
+  HTML에 FOUC 방지 `classList.toggle("dark")` 스크립트 포함 확인.
+
+### 다음 세션 주의사항
+1. **불변 유지 확인됨**: types/constants/mock-data/pcf-calculator/validators, 14개 컴포넌트 props,
+   라우팅 모두 무변경. 이후 작업도 동일 원칙.
+2. **시각 회귀 캡처는 후속 권장**: `npx playwright install chromium` 후 `yarn dev` →
+   `node scripts/capture-baseline.mjs`(+`CAPTURE_DARK=1`)로 라이트/다크 before·after 비교 가능.
+   본 세션은 chromium 미설치로 캡처는 미수행(빌드/HTTP/CSS로 검증 대체).
+3. **폰트 CDN 의존**: Pretendard/JetBrains Mono는 CDN `@import`. 오프라인/사내망에서는 시스템
+   폰트 폴백으로 동작(토큰 stack에 system-ui 포함). 자가 호스팅이 필요하면 next/font/local 전환 고려.
+4. **다크 토글 위치**: AppNav 우측. 테마 단일 출처는 `<html>.dark` 클래스 + `localStorage["theme"]`.

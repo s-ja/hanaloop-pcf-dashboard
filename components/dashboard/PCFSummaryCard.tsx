@@ -34,16 +34,16 @@ export default function PCFSummaryCard({
 
   // 증가=빨강(악화), 감소=초록(개선), 비교 불가/동일=회색
   const changeClass = increased
-    ? "text-red-600 bg-red-50"
+    ? "text-[color:var(--color-up)] bg-[color:var(--color-up-soft)]"
     : decreased
-      ? "text-emerald-600 bg-emerald-50"
-      : "text-gray-500 bg-gray-100";
+      ? "text-[color:var(--color-down)] bg-[color:var(--color-down-soft)]"
+      : "text-fg-subtle bg-surface-2";
   const arrow = increased ? "↑" : decreased ? "↓" : "";
 
   return (
-    <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+    <section className="rounded-[var(--radius-card)] border border-border bg-surface p-6 shadow-[var(--shadow-card)]">
       <div className="flex items-baseline justify-between gap-2">
-        <h2 className="text-sm font-medium text-gray-500">
+        <h2 className="text-sm font-medium text-fg-subtle">
           {formatPeriodLabel(period)} 총 PCF
         </h2>
         <span
@@ -55,16 +55,16 @@ export default function PCFSummaryCard({
           }
         >
           {arrow && <span aria-hidden>{arrow}</span>}
-          <span>{changeText}</span>
+          <span className="font-mono">{changeText}</span>
           <span className="sr-only">직전 기간 대비</span>
         </span>
       </div>
 
       <p className="mt-3 flex items-baseline gap-2">
-        <span className="text-4xl font-bold tracking-tight text-gray-900">
+        <span className="font-mono text-4xl font-bold tracking-tight text-fg">
           {formatNumber(totalPCF)}
         </span>
-        <span className="text-lg font-medium text-gray-500">{unit}</span>
+        <span className="font-mono text-base text-fg-subtle">{unit}</span>
       </p>
     </section>
   );

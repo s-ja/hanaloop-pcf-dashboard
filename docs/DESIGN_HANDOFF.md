@@ -137,16 +137,16 @@ CAPTURE_DARK=1 node scripts/capture-baseline.mjs                   # *-dark.png 
 
 ## 9. Session 5 통합·검증 체크리스트 (2단계에서 채움)
 
-- [ ] `app/globals.css @theme`에 토큰 정착(라이트/다크) + `@custom-variant dark`
-- [ ] 컴포넌트 className 교체 — **로직/props 무변경** 확인
-- [ ] `CATEGORY_COLORS`·`ScopeTag` 색을 토큰 참조로
-- [ ] 다크 토글 구현(AppNav) + `localStorage` 영속 + prefers-color-scheme 초기값
-- [ ] recharts 축/그리드/카테고리 색 토큰화(D3)
-- [ ] 모바일 ActivityTable D2 반영
-- [ ] 반응형 검증: `preview_resize` 375/768/1280
-- [ ] 다크 대비 검증: `preview_resize colorScheme=dark` + `preview_inspect` 대비비
-- [ ] `yarn build`/`lint`/`test`(46+) 회귀 0, 콘솔 에러 0
-- [ ] SESSION_LOG.md Session 5 갱신
+- [x] `app/globals.css @theme`에 토큰 정착(라이트/다크) + `@custom-variant dark` — src/theme.css 그대로 이식
+- [x] 컴포넌트 className 교체 — **로직/props 무변경** 확인 (14종 모두 시그니처 불변)
+- [x] `CATEGORY_COLORS`·`ScopeTag` 색을 토큰 참조로 (`var(--chart-cat-*)` / `var(--scope-*)`)
+- [x] 다크 토글 구현(AppNav) + `localStorage` 영속 + prefers-color-scheme 초기값 (FOUC 방지 인라인 스크립트 + `useSyncExternalStore`)
+- [x] recharts 축/그리드/카테고리/트렌드 색 토큰화(D3)
+- [x] 모바일 ActivityTable D2 반영 (md 미만 카드형 / md 이상 테이블, props 불변)
+- [~] 반응형 검증: 375/768/1280 — 빌드/HTTP 200 확인. 시각 회귀 캡처는 `node scripts/capture-baseline.mjs`(chromium 설치 필요)로 별도 수행 권장
+- [~] 다크 대비 검증 — 토큰은 디자인이 WCAG AA 페어로 산출. `CAPTURE_DARK=1` 캡처는 후속 권장
+- [x] `yarn build`/`lint`/`test`(46/46) 회귀 0, lint clean
+- [x] SESSION_LOG.md Session 5 갱신
 
 ---
 

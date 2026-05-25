@@ -1,26 +1,200 @@
+/* ============================================================================
+ * HanaLoop PCF — Design System tokens (Session 5)
+ *
+ *   - 라이트/다크 토큰 페어. 다크는 .dark 클래스로 수동 토글(D1).
+ *   - 도메인 의미 색(증가=빨강·감소=초록, S1 amber·S2 sky·S3↑ emerald·S3↓ violet,
+ *     primary=sky-600)은 불변. 명도/채도만 다크 페어로 재정의.
+ *   - recharts 색은 hex 직접 대신 본 파일의 CSS 변수(--chart-*)에서 읽도록 D3 적용.
+ *
+ * 출처: claude.ai 디자인 핸드오프 번들 src/theme.css (Session 5 디자인 산출물).
+ * ============================================================================ */
+
+/* 디자인 토큰 폰트 페어 — Pretendard Variable + JetBrains Mono.
+   신규 런타임 패키지 없이 CDN 스타일시트로 로드합니다. CSS @import 로 두어
+   Next 의 no-page-custom-font 경고(JSX <link> 스캔)를 피합니다. */
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css");
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap");
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* ---------- Surfaces ----------------------------------------------------- */
+  --color-bg:               oklch(98.4% 0.003 250);
+  --color-surface:          #ffffff;
+  --color-surface-2:        oklch(96.5% 0.005 250);
+  --color-surface-3:        oklch(94% 0.006 250);
+  --color-border:           oklch(91% 0.006 250);
+  --color-border-strong:    oklch(82% 0.008 250);
+
+  /* ---------- Text -------------------------------------------------------- */
+  --color-fg:               oklch(20% 0.012 250);
+  --color-fg-muted:         oklch(42% 0.012 250);
+  --color-fg-subtle:        oklch(58% 0.012 250);
+  --color-fg-faint:         oklch(70% 0.012 250);
+
+  /* ---------- Primary (sky-600 lock) ------------------------------------- */
+  --color-primary:          #0284c7;
+  --color-primary-hover:    #0369a1;
+  --color-primary-fg:       #ffffff;
+  --color-primary-soft:     #e0f2fe;
+  --color-primary-soft-fg:  #075985;
+  --color-ring:             #0284c7;
+
+  /* ---------- Domain semantic (증가=빨강 · 감소=초록) -------------------- */
+  --color-up:               #dc2626;   /* 증가 = 악화 */
+  --color-up-soft:          #fef2f2;
+  --color-down:             #059669;   /* 감소 = 개선 */
+  --color-down-soft:        #ecfdf5;
+  --color-warn:             #d97706;
+  --color-warn-soft:        #fffbeb;
+  --color-info:             #0284c7;
+  --color-info-soft:        #f0f9ff;
+
+  /* ---------- Scope chips (의미 고정, 시각만 재정의 가능) ----------------- */
+  --scope-s1-bg:            #fef3c7;
+  --scope-s1-fg:            #92400e;
+  --scope-s1-ring:          rgb(217 119 6 / 0.2);
+  --scope-s2-bg:            #e0f2fe;
+  --scope-s2-fg:            #075985;
+  --scope-s2-ring:          rgb(2 132 199 / 0.2);
+  --scope-s3up-bg:          #d1fae5;
+  --scope-s3up-fg:          #065f46;
+  --scope-s3up-ring:        rgb(5 150 105 / 0.2);
+  --scope-s3dn-bg:          #ede9fe;
+  --scope-s3dn-fg:          #5b21b6;
+  --scope-s3dn-ring:        rgb(124 58 237 / 0.2);
+
+  /* ---------- Goal progress (초과/임박/이내) ------------------------------ */
+  --color-goal-ok:          #059669;
+  --color-goal-near:        #d97706;
+  --color-goal-over:        #dc2626;
+
+  /* ---------- Charts (D3: recharts 토큰화) ------------------------------- */
+  --chart-cat-electricity:  #0284c7;   /* = S2 sky 계열(의도된 연계) */
+  --chart-cat-material:     #059669;   /* = S3↑ emerald 계열(의도된 연계) */
+  --chart-cat-transport:    #d97706;   /* amber */
+  --chart-trend:            #0f766e;   /* teal — 카테고리 3색과 비충돌 */
+  --chart-axis:             #6b7280;
+  --chart-grid:             #e5e7eb;
+  --chart-tooltip-bg:       #ffffff;
+  --chart-tooltip-border:   #e5e7eb;
+
+  /* ---------- Radius / Shadow -------------------------------------------- */
+  --radius-card:            0.5rem;
+  --radius-control:         0.375rem;
+  --radius-pill:            9999px;
+  --shadow-card:            0 1px 2px 0 rgb(15 23 42 / 0.04);
+  --shadow-card-hover:      0 1px 3px 0 rgb(15 23 42 / 0.08), 0 1px 2px -1px rgb(15 23 42 / 0.04);
+  --shadow-pop:             0 8px 24px -8px rgb(15 23 42 / 0.18), 0 2px 4px -2px rgb(15 23 42 / 0.06);
+}
+
+.dark {
+  --color-bg:               oklch(15% 0.008 250);
+  --color-surface:          oklch(19% 0.008 250);
+  --color-surface-2:        oklch(23% 0.01 250);
+  --color-surface-3:        oklch(27% 0.012 250);
+  --color-border:           oklch(30% 0.012 250);
+  --color-border-strong:    oklch(40% 0.014 250);
+
+  --color-fg:               oklch(96% 0.005 250);
+  --color-fg-muted:         oklch(78% 0.01 250);
+  --color-fg-subtle:        oklch(62% 0.01 250);
+  --color-fg-faint:         oklch(48% 0.01 250);
+
+  --color-primary:          #38bdf8;
+  --color-primary-hover:    #7dd3fc;
+  --color-primary-fg:       #0c1a26;
+  --color-primary-soft:     rgb(56 189 248 / 0.15);
+  --color-primary-soft-fg:  #bae6fd;
+  --color-ring:             #38bdf8;
+
+  --color-up:               #f87171;
+  --color-up-soft:          rgb(248 113 113 / 0.15);
+  --color-down:             #34d399;
+  --color-down-soft:        rgb(52 211 153 / 0.15);
+  --color-warn:             #fbbf24;
+  --color-warn-soft:        rgb(251 191 36 / 0.15);
+  --color-info:             #38bdf8;
+  --color-info-soft:        rgb(56 189 248 / 0.12);
+
+  --scope-s1-bg:            rgb(251 191 36 / 0.16);
+  --scope-s1-fg:            #fcd34d;
+  --scope-s1-ring:          rgb(251 191 36 / 0.35);
+  --scope-s2-bg:            rgb(56 189 248 / 0.18);
+  --scope-s2-fg:            #7dd3fc;
+  --scope-s2-ring:          rgb(56 189 248 / 0.4);
+  --scope-s3up-bg:          rgb(52 211 153 / 0.18);
+  --scope-s3up-fg:          #6ee7b7;
+  --scope-s3up-ring:        rgb(52 211 153 / 0.35);
+  --scope-s3dn-bg:          rgb(167 139 250 / 0.18);
+  --scope-s3dn-fg:          #c4b5fd;
+  --scope-s3dn-ring:        rgb(167 139 250 / 0.4);
+
+  --color-goal-ok:          #34d399;
+  --color-goal-near:        #fbbf24;
+  --color-goal-over:        #f87171;
+
+  --chart-cat-electricity:  #38bdf8;
+  --chart-cat-material:     #34d399;
+  --chart-cat-transport:    #fbbf24;
+  --chart-trend:            #5eead4;
+  --chart-axis:             #94a3b8;
+  --chart-grid:             rgb(148 163 184 / 0.16);
+  --chart-tooltip-bg:       oklch(22% 0.01 250);
+  --chart-tooltip-border:   oklch(32% 0.012 250);
+
+  --shadow-card:            0 1px 2px 0 rgb(0 0 0 / 0.4);
+  --shadow-card-hover:      0 1px 3px 0 rgb(0 0 0 / 0.5);
+  --shadow-pop:             0 8px 24px -8px rgb(0 0 0 / 0.6), 0 2px 4px -2px rgb(0 0 0 / 0.4);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* Surface / text */
+  --color-bg:               var(--color-bg);
+  --color-surface:          var(--color-surface);
+  --color-surface-2:        var(--color-surface-2);
+  --color-surface-3:        var(--color-surface-3);
+  --color-border:           var(--color-border);
+  --color-border-strong:    var(--color-border-strong);
+  --color-fg:               var(--color-fg);
+  --color-fg-muted:         var(--color-fg-muted);
+  --color-fg-subtle:        var(--color-fg-subtle);
+  --color-fg-faint:         var(--color-fg-faint);
+
+  /* Primary / semantic */
+  --color-primary:          var(--color-primary);
+  --color-primary-hover:    var(--color-primary-hover);
+  --color-primary-fg:       var(--color-primary-fg);
+  --color-primary-soft:     var(--color-primary-soft);
+  --color-primary-soft-fg:  var(--color-primary-soft-fg);
+  --color-up:               var(--color-up);
+  --color-up-soft:          var(--color-up-soft);
+  --color-down:             var(--color-down);
+  --color-down-soft:        var(--color-down-soft);
+  --color-warn:             var(--color-warn);
+  --color-warn-soft:        var(--color-warn-soft);
+  --color-info:             var(--color-info);
+  --color-info-soft:        var(--color-info-soft);
+  --color-goal-ok:          var(--color-goal-ok);
+  --color-goal-near:        var(--color-goal-near);
+  --color-goal-over:        var(--color-goal-over);
+
+  /* Typography */
+  --font-sans:              "Pretendard Variable", Pretendard, ui-sans-serif, system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  --font-mono:              "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  /* Radius */
+  --radius-card:            var(--radius-card);
+  --radius-control:         var(--radius-control);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+/* ---------- Body wiring ---------------------------------------------------- */
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-bg);
+  color: var(--color-fg);
+  font-family: var(--font-sans);
+  font-feature-settings: "ss01", "cv11", "tnum";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }

@@ -22,22 +22,26 @@ const SCOPE_CONFIG: Record<
   { className: string; symbol: string; title: string }
 > = {
   scope1: {
-    className: "bg-amber-100 text-amber-800 ring-amber-600/20",
+    className:
+      "bg-[color:var(--scope-s1-bg)] text-[color:var(--scope-s1-fg)] ring-[color:var(--scope-s1-ring)]",
     symbol: "S1",
     title: "Scope 1 — 기업이 직접 통제하는 배출원 (연소 등 직접 배출)",
   },
   scope2: {
-    className: "bg-sky-100 text-sky-800 ring-sky-600/20",
+    className:
+      "bg-[color:var(--scope-s2-bg)] text-[color:var(--scope-s2-fg)] ring-[color:var(--scope-s2-ring)]",
     symbol: "S2",
     title: "Scope 2 — 구매한 전기·열·증기에서 발생하는 간접 배출",
   },
   scope3_upstream: {
-    className: "bg-emerald-100 text-emerald-800 ring-emerald-600/20",
+    className:
+      "bg-[color:var(--scope-s3up-bg)] text-[color:var(--scope-s3up-fg)] ring-[color:var(--scope-s3up-ring)]",
     symbol: "S3↑",
     title: "Scope 3 (업스트림) — 원자재·협력사 운송 등 가치사슬 상류 간접 배출",
   },
   scope3_downstream: {
-    className: "bg-violet-100 text-violet-800 ring-violet-600/20",
+    className:
+      "bg-[color:var(--scope-s3dn-bg)] text-[color:var(--scope-s3dn-fg)] ring-[color:var(--scope-s3dn-ring)]",
     symbol: "S3↓",
     title: "Scope 3 (다운스트림) — 제품 배송·사용·폐기 등 가치사슬 하류 간접 배출",
   },
