@@ -30,7 +30,7 @@ interface ActivityTableProps {
 export default function ActivityTable({ activities, period }: ActivityTableProps) {
   if (activities.length === 0) {
     return (
-      <div className="flex h-32 items-center justify-center text-sm text-gray-400">
+      <div className="flex h-32 items-center justify-center text-sm text-fg-faint">
         {period ? `${formatPeriodLabel(period)}에 ` : ""}활동 데이터가 없습니다.
       </div>
     );
@@ -54,71 +54,120 @@ export default function ActivityTable({ activities, period }: ActivityTableProps
   const total = rows.reduce((sum, row) => sum + row.emission, 0);
 
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full min-w-[720px] border-collapse text-sm">
-        <thead>
-          <tr className="border-b border-gray-200 text-left text-xs font-medium text-gray-500">
-            <th className="py-2 pr-3">일자</th>
-            <th className="py-2 pr-3">카테고리</th>
-            <th className="py-2 pr-3">설명</th>
-            <th className="py-2 pr-3">Scope</th>
-            <th className="py-2 pr-3 text-right">활동량</th>
-            <th className="py-2 pr-3">배출계수</th>
-            <th className="py-2 pl-3 text-right">배출량</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map(({ activity, factor, emission }) => {
-            return (
-              <tr
-                key={activity.id}
-                className="border-b border-gray-100 text-gray-700"
-              >
-                <td className="py-2 pr-3 whitespace-nowrap tabular-nums text-gray-500">
+    <>
+      {/* 데스크탑: 표 레이아웃 (md 이상) — D2: props 불변, 표시만 분기 */}
+      <div className="hidden overflow-x-auto md:block">
+        <table className="w-full min-w-[720px] border-collapse text-sm">
+          <thead>
+            <tr className="border-b border-border text-left text-xs font-medium uppercase tracking-wide text-fg-subtle">
+              <th className="py-2 pr-3 font-medium">일자</th>
+              <th className="py-2 pr-3 font-medium">카테고리</th>
+              <th className="py-2 pr-3 font-medium">설명</th>
+              <th className="py-2 pr-3 font-medium">Scope</th>
+              <th className="py-2 pr-3 text-right font-medium">활동량</th>
+              <th className="py-2 pr-3 font-medium">배출계수</th>
+              <th className="py-2 pl-3 text-right font-medium">배출량</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map(({ activity, factor, emission }) => {
+              return (
+                <tr
+                  key={activity.id}
+                  className="border-b border-border/60 text-fg-muted transition-colors hover:bg-surface-2"
+                >
+                  <td className="py-2 pr-3 whitespace-nowrap font-mono text-xs text-fg-subtle">
+                    {activity.date}
+                  </td>
+                  <td className="py-2 pr-3 whitespace-nowrap text-fg">
+                    {ActivityCategoryLabel[activity.category]}
+                  </td>
+                  <td className="py-2 pr-3 whitespace-nowrap text-fg">
+                    {activity.description}
+                  </td>
+                  <td className="py-2 pr-3">
+                    {factor ? <ScopeTag scope={factor.scope} /> : "—"}
+                  </td>
+                  <td className="py-2 pr-3 text-right whitespace-nowrap">
+                    <span className="font-mono tabular-nums text-fg">
+                      {formatNumber(activity.amount)}
+                    </span>{" "}
+                    <UnitLabel unit={activity.unit} />
+                  </td>
+                  <td className="py-2 pr-3">
+                    {factor ? (
+                      <EmissionFactorBadge
+                        version={factor.version}
+                        source={factor.source}
+                        validFrom={factor.validFrom}
+                      />
+                    ) : (
+                      "—"
+                    )}
+                  </td>
+                  <td className="py-2 pl-3 text-right whitespace-nowrap font-medium tabular-nums text-fg">
+                    {formatEmission(emission)}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+          <tfoot>
+            <tr className="border-t-2 border-border-strong font-semibold text-fg">
+              <td className="py-2 pr-3" colSpan={6}>
+                합계 ({rows.length}건)
+              </td>
+              <td className="py-2 pl-3 text-right tabular-nums">
+                {formatEmission(total)}
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      {/* 모바일: 카드형 레이아웃 (md 미만) — D2 권장안. 7열 가로 스크롤의 인지
+          부담을 줄이기 위해 행을 카드로 전환합니다(동일 데이터, props 불변). */}
+      <ul className="flex flex-col gap-2 md:hidden">
+        {rows.map(({ activity, factor, emission }) => (
+          <li
+            key={activity.id}
+            className="rounded-[var(--radius-control)] border border-border bg-surface-2/40 p-3"
+          >
+            <div className="flex items-start justify-between gap-2">
+              <div className="flex flex-col gap-0.5">
+                <span className="font-mono text-[11px] text-fg-subtle">
                   {activity.date}
-                </td>
-                <td className="py-2 pr-3 whitespace-nowrap">
-                  {ActivityCategoryLabel[activity.category]}
-                </td>
-                <td className="py-2 pr-3 whitespace-nowrap">
-                  {activity.description}
-                </td>
-                <td className="py-2 pr-3">
-                  {factor ? <ScopeTag scope={factor.scope} /> : "—"}
-                </td>
-                <td className="py-2 pr-3 text-right whitespace-nowrap tabular-nums">
-                  {formatNumber(activity.amount)}{" "}
-                  <UnitLabel unit={activity.unit} />
-                </td>
-                <td className="py-2 pr-3">
-                  {factor ? (
-                    <EmissionFactorBadge
-                      version={factor.version}
-                      source={factor.source}
-                      validFrom={factor.validFrom}
-                    />
-                  ) : (
-                    "—"
-                  )}
-                </td>
-                <td className="py-2 pl-3 text-right whitespace-nowrap font-medium tabular-nums text-gray-900">
+                </span>
+                <span className="text-sm font-medium text-fg">
+                  {ActivityCategoryLabel[activity.category]} · {activity.description}
+                </span>
+              </div>
+              <div className="text-right">
+                <div className="font-mono text-sm font-semibold tabular-nums text-fg">
                   {formatEmission(emission)}
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-        <tfoot>
-          <tr className="border-t-2 border-gray-300 font-semibold text-gray-900">
-            <td className="py-2 pr-3" colSpan={6}>
-              합계 ({rows.length}건)
-            </td>
-            <td className="py-2 pl-3 text-right tabular-nums">
-              {formatEmission(total)}
-            </td>
-          </tr>
-        </tfoot>
-      </table>
-    </div>
+                </div>
+                <div className="font-mono text-[11px] text-fg-muted">
+                  {formatNumber(activity.amount)} {activity.unit}
+                </div>
+              </div>
+            </div>
+            <div className="mt-2 flex flex-wrap items-center gap-1.5">
+              {factor && <ScopeTag scope={factor.scope} />}
+              {factor && (
+                <EmissionFactorBadge
+                  version={factor.version}
+                  source={factor.source}
+                  validFrom={factor.validFrom}
+                />
+              )}
+            </div>
+          </li>
+        ))}
+        <li className="mt-1 flex items-center justify-between border-t-2 border-border-strong px-1 pt-2 text-sm font-semibold text-fg">
+          <span>합계 ({rows.length}건)</span>
+          <span className="font-mono tabular-nums">{formatEmission(total)}</span>
+        </li>
+      </ul>
+    </>
   );
 }
