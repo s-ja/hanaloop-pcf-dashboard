@@ -336,3 +336,31 @@
 3. **폰트 CDN 의존**: Pretendard/JetBrains Mono는 CDN `@import`. 오프라인/사내망에서는 시스템
    폰트 폴백으로 동작(토큰 stack에 system-ui 포함). 자가 호스팅이 필요하면 next/font/local 전환 고려.
 4. **다크 토글 위치**: AppNav 우측. 테마 단일 출처는 `<html>.dark` 클래스 + `localStorage["theme"]`.
+
+---
+
+## Session 6 완료 (2026-05-26) — 제출 마무리
+
+### 완료 파일
+- `README.md` — 신규 작성. 프로젝트 개요·라이브 데모·기술 스택(실제 package.json 기준),
+  로컬 실행 5단계(yarn, /dashboard 리다이렉트·package-lock 차단 안내), 시스템 설계
+  (디렉토리 구조·데이터 흐름·ERD·단계별 변경 매트릭스), AI 사용 내역(분석 세션/Claude Code
+  5세션/Claude Design), 작업 소요 시간, baseline 스크린샷 5장 임베드, 실행 비디오 placeholder,
+  향후 확장 방향(Phase 2 API Routes·다년 비교·Bonus), 추가 문서 링크.
+- ERD는 PLANNING 4-2 Mermaid 블록을 `types/index.ts`(Product/ActivityData/EmissionFactor)와
+  1:1 대조 검증 후 삽입. 인용 함수(`calculatePCFForPeriod`/`buildDashboardPeriodOptions`) 존재 확인.
+
+### 검증 결과
+- ✅ `yarn lint` clean (0 error / 0 warning)
+- ✅ `yarn test` 46/46 통과 (회귀 0)
+- ✅ `yarn build` 성공 (TypeScript 통과, `/`·`/dashboard`·`/input` static prerender).
+  recharts width(-1) prerender 경고는 Session 3부터의 기존 사항(동작/빌드 영향 없음).
+- ✅ 커밋 `66c87cd` → `origin/main` 푸시 완료.
+- ✅ 라이브 데모 https://hanaloop-pcf-dashboard.vercel.app/dashboard
+
+### 미진행 (의식적 제외)
+- Phase 2 API Routes: PLANNING 4-3 매트릭스로 설계 문서화 완료, 코드 구현은 시간 제약으로 보류.
+- 보너스 4종 모두 보류 (Docker / Swagger / Excel 임포트 / 타 시스템 비교).
+- 다년간 비교: README 향후 확장 방향에 대응 경로 명시(date ISO 보존 + 계산기/필터 자동 반영).
+- 다크 모드 baseline 캡처: README만 추가하여 미실행. `CAPTURE_DARK=1`로 후속 캡처 가능.
+- 실행 비디오: 사용자가 별도 녹화 후 `docs/demo.mp4`(또는 외부 링크)로 첨부 예정.
