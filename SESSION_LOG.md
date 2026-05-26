@@ -362,5 +362,12 @@
 - Phase 2 API Routes: PLANNING 4-3 매트릭스로 설계 문서화 완료, 코드 구현은 시간 제약으로 보류.
 - 보너스 4종 모두 보류 (Docker / Swagger / Excel 임포트 / 타 시스템 비교).
 - 다년간 비교: README 향후 확장 방향에 대응 경로 명시(date ISO 보존 + 계산기/필터 자동 반영).
-- 다크 모드 baseline 캡처: README만 추가하여 미실행. `CAPTURE_DARK=1`로 후속 캡처 가능.
-- 실행 비디오: 사용자가 별도 녹화 후 `docs/demo.mp4`(또는 외부 링크)로 첨부 예정.
+
+### 후속 보강 (제출 직전, 2026-05-26)
+- **다크 모드 스크린샷 추가**: Claude Design 통합 후 변경된 UI로 라이트/다크 5종씩 재캡처
+  (`docs/design/baseline/*-dark.png` 5장). README 길이 비대화를 피하기 위해 라이트는 기본
+  노출, 다크는 GitHub `<details>` 접이식 블록("클릭하여 펼치기")으로 절충 배치.
+- **실행 비디오 첨부**: YouTube 업로드 후 README 6장에 연결. 이미지 문법(`![]()`)으로는
+  깨지므로 **클릭 가능한 썸네일 링크**(`[![..](img.youtube.com/vi/<id>/hqdefault.jpg)](youtu.be/<id>)`)로
+  교정. 영상: https://youtu.be/joyh6NbI-yw
+- **README 잔여 태그 제거**: 직전 편집 중 혼입된 파일 끝 `</content>`/`</invoke>` 텍스트 삭제.
