@@ -6,15 +6,15 @@ B2B 탄소관리 플랫폼(하나루프 Hana.eco)의 **PCF(제품탄소발자국
 
 ## 기술 스택
 
-| 영역 | 선택 |
-|---|---|
-| 언어 | TypeScript 5 |
-| 프레임워크 | Next.js 16.2.6 (App Router) + React 19.2 |
-| 차트 | Recharts 3.8 |
-| 스타일링 | Tailwind CSS v4 (`@theme` 토큰, `tailwind.config.ts` 없음) |
-| 테스트 | Vitest 4 |
-| 패키지 매니저 | yarn 1.22.22 (corepack) |
-| 분석 | @vercel/analytics |
+| 영역          | 선택                                                       |
+| ------------- | ---------------------------------------------------------- |
+| 언어          | TypeScript 5                                               |
+| 프레임워크    | Next.js 16.2.6 (App Router) + React 19.2                   |
+| 차트          | Recharts 3.8                                               |
+| 스타일링      | Tailwind CSS v4 (`@theme` 토큰, `tailwind.config.ts` 없음) |
+| 테스트        | Vitest 4                                                   |
+| 패키지 매니저 | yarn 1.22.22 (corepack)                                    |
+| 분석          | @vercel/analytics                                          |
 
 > Tailwind v4·Next 16은 `create-next-app@latest` 기본 생성물 기준입니다. App Router 구조는 동일하며, Next 16은 `next lint`를 제거하여 `lint` 스크립트가 `eslint`로 동작합니다.
 
@@ -149,17 +149,17 @@ erDiagram
 
 컴포넌트와 계산 로직은 **모든 단계에서 불변**입니다. 이것이 단계적 도입 설계의 핵심 trade-off 근거입니다([docs/PLANNING.md](docs/PLANNING.md) 4-3).
 
-| 파일 | Phase 1 (현재) | Phase 2 (API Routes) | Bonus (DB) |
-|---|---|---|---|
-| `types/index.ts` | ✅ 생성 | 🔒 불변 | 🔒 불변 |
-| `lib/constants.ts` | ✅ 생성 | 🔒 불변 | 🔒 불변 |
-| `lib/mock-data.ts` | ✅ 생성 | 🔒 불변 (API 내부 참조) | ❌ 제거 (DB 대체) |
-| `lib/pcf-calculator.ts` | ✅ 생성 | 🔒 불변 | 🔒 불변 |
-| `components/**` | ✅ 생성 | 🔒 불변 (props 동일) | 🔒 불변 |
-| `lib/api-client.ts` | ❌ 없음 | ✅ 생성 | 🔒 불변 |
-| `app/api/**/route.ts` | ❌ 없음 | ✅ 생성 | 🔄 내부 로직만 교체 |
-| `prisma/schema.prisma` | ❌ 없음 | ❌ 없음 | ✅ 생성 |
-| `docker-compose.yml` | ❌ 없음 | ❌ 없음 | ✅ 생성 |
+| 파일                    | Phase 1 (현재) | Phase 2 (API Routes)    | Bonus (DB)          |
+| ----------------------- | -------------- | ----------------------- | ------------------- |
+| `types/index.ts`        | ✅ 생성        | 🔒 불변                 | 🔒 불변             |
+| `lib/constants.ts`      | ✅ 생성        | 🔒 불변                 | 🔒 불변             |
+| `lib/mock-data.ts`      | ✅ 생성        | 🔒 불변 (API 내부 참조) | ❌ 제거 (DB 대체)   |
+| `lib/pcf-calculator.ts` | ✅ 생성        | 🔒 불변                 | 🔒 불변             |
+| `components/**`         | ✅ 생성        | 🔒 불변 (props 동일)    | 🔒 불변             |
+| `lib/api-client.ts`     | ❌ 없음        | ✅ 생성                 | 🔒 불변             |
+| `app/api/**/route.ts`   | ❌ 없음        | ✅ 생성                 | 🔄 내부 로직만 교체 |
+| `prisma/schema.prisma`  | ❌ 없음        | ❌ 없음                 | ✅ 생성             |
+| `docker-compose.yml`    | ❌ 없음        | ❌ 없음                 | ✅ 생성             |
 
 ---
 
@@ -167,11 +167,11 @@ erDiagram
 
 본 과제는 분석 → 구현 → 디자인 → 통합을 서로 다른 AI 도구로 분담하고, 도구 간 컨텍스트는 레포의 `docs/*.md`와 `SESSION_LOG.md`로 공유했습니다([docs/PLANNING.md](docs/PLANNING.md) 8장).
 
-| 도구 | 역할 | 사용자 활용 양상 (핵심) |
-|---|---|---|
-| **Claude (분석 세션)** | 탄소 도메인·사용자·구현 전략 분석 | `docs/DOMAIN.md`·`docs/USER_RESEARCH.md`·`docs/PLANNING.md` 3종 작성. 코드 작성 전 도메인 개념(PCF/Scope/배출계수)과 페르소나를 서면으로 확정 |
-| **Claude Code** | 구현 전반(타입·계산·컴포넌트·페이지·테스트) | **5개 세션으로 분리** 진행하여 각 세션 종료 시 `SESSION_LOG.md`에 완료 파일·검증 결과·다음 세션 주의사항을 기록. 불변 제약(types/계산/상수)을 세션 간 전달하여 일관성 유지 |
-| **Claude Design** | 디자인 시스템 토큰화·다크 모드·반응형 시안 | `docs/DESIGN_HANDOFF.md`를 두 surface 간 공유 계약으로 사용. baseline 스크린샷을 첨부해 실제 데이터 밀도 기반으로 토큰(라이트/다크 쌍)·차트 색·모바일 레이아웃 시안을 산출, Claude Code가 props 무변경으로 통합 |
+| 도구                   | 역할                                        | 사용자 활용 양상 (핵심)                                                                                                                                                                                         |
+| ---------------------- | ------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Claude (분석 세션)** | 탄소 도메인·사용자·구현 전략 분석           | `docs/DOMAIN.md`·`docs/USER_RESEARCH.md`·`docs/PLANNING.md` 3종 작성. 코드 작성 전 도메인 개념(PCF/Scope/배출계수)과 페르소나를 서면으로 확정                                                                   |
+| **Claude Code**        | 구현 전반(타입·계산·컴포넌트·페이지·테스트) | **5개 세션으로 분리** 진행하여 각 세션 종료 시 `SESSION_LOG.md`에 완료 파일·검증 결과·다음 세션 주의사항을 기록. 불변 제약(types/계산/상수)을 세션 간 전달하여 일관성 유지                                      |
+| **Claude Design**      | 디자인 시스템 토큰화·다크 모드·반응형 시안  | `docs/DESIGN_HANDOFF.md`를 두 surface 간 공유 계약으로 사용. baseline 스크린샷을 첨부해 실제 데이터 밀도 기반으로 토큰(라이트/다크 쌍)·차트 색·모바일 레이아웃 시안을 산출, Claude Code가 props 무변경으로 통합 |
 
 > 본 과제 범위상 프롬프트 본문이나 코드 수정 이력의 정제·보존은 포함하지 않습니다([docs/PLANNING.md](docs/PLANNING.md) 8-4).
 
@@ -181,14 +181,14 @@ erDiagram
 
 전체 작업은 **2일(2026-05-25 ~ 05-26)** 에 걸쳐 진행했으며, 분석 세션(Phase 0)으로 설계 문서를 먼저 확정한 뒤 구현 5세션을 이어 수행했습니다.
 
-| 일자 | 작업 | 산출물 |
-|---|---|---|
-| 사전 | 분석 세션 (Phase 0) | docs 3종 |
-| 05-25 | Session 1 — 타입·상수·mock·계산기 + 회귀 테스트 | 기반 레이어, 5월 PCF 정합 |
+| 일자  | 작업                                                | 산출물                       |
+| ----- | --------------------------------------------------- | ---------------------------- |
+| 사전  | 분석 세션 (Phase 0)                                 | docs 3종                     |
+| 05-25 | Session 1 — 타입·상수·mock·계산기 + 회귀 테스트     | 기반 레이어, 5월 PCF 정합    |
 | 05-25 | Session 2 — 공유 컴포넌트·UI 프리미티브·포매팅/검증 | shared/ui, format/validators |
-| 05-25 | Session 3 — 대시보드 컴포넌트·페이지·라우팅 | /dashboard, 차트·드릴다운 |
-| 05-25 | Session 4 — 입력 폼·검증·즉시 프리뷰 | /input, 에러 메시지 |
-| 05-26 | Session 5 — 디자인 토큰 통합·다크 모드·차트 토큰화 | globals.css 토큰, 반응형 |
+| 05-25 | Session 3 — 대시보드 컴포넌트·페이지·라우팅         | /dashboard, 차트·드릴다운    |
+| 05-25 | Session 4 — 입력 폼·검증·즉시 프리뷰                | /input, 에러 메시지          |
+| 05-26 | Session 5 — 디자인 토큰 통합·다크 모드·차트 토큰화  | globals.css 토큰, 반응형     |
 
 **시간이 많이 든 영역**
 
@@ -198,7 +198,7 @@ erDiagram
 
 ---
 
-## 5. 스크린샷
+기본 화면은 라이트 모드 기준입니다. 다크 모드 캡처는 동일 5종을 모두 확보해 두었으며, README 길이 절약을 위해 아래 접이식 블록(▶ 클릭)으로 제공합니다.
 
 ### 대시보드 (경영자 뷰)
 
@@ -211,15 +211,33 @@ erDiagram
 ![Input Desktop](docs/design/baseline/input-desktop-1280.png)
 ![Input Mobile](docs/design/baseline/input-mobile-375.png)
 
-> 스크린샷은 `scripts/capture-baseline.mjs`(Playwright, fullPage)로 재캡처할 수 있습니다: `npx playwright install chromium` → `yarn dev` → `node scripts/capture-baseline.mjs`. 다크 모드 캡처는 `CAPTURE_DARK=1`을 붙입니다.
+<details>
+<summary>🌙 <b>다크 모드 스크린샷 보기</b> — 동일 5종 (클릭하여 펼치기)</summary>
+
+<br />
+
+**대시보드 (경영자 뷰)**
+
+![Dashboard Desktop Dark](docs/design/baseline/dashboard-desktop-1280-dark.png)
+![Dashboard Mobile Dark](docs/design/baseline/dashboard-mobile-375-dark.png)
+![Dashboard Tablet Dark](docs/design/baseline/dashboard-tablet-800-dark.png)
+
+**데이터 입력 (실무자 뷰)**
+
+![Input Desktop Dark](docs/design/baseline/input-desktop-1280-dark.png)
+![Input Mobile Dark](docs/design/baseline/input-mobile-375-dark.png)
+
+</details>
+
+> 스크린샷은 `scripts/capture-baseline.mjs`(Playwright, fullPage)로 재캡처할 수 있습니다: `npx playwright install chromium` → `yarn dev` → `node scripts/capture-baseline.mjs`. 다크 모드 캡처는 `CAPTURE_DARK=1`을 붙입니다(라이트/다크 동시 생성).
 
 ---
 
 ## 6. 실행 비디오
 
-> 비디오: docs/demo.mp4 (또는 외부 링크)
+[![HanaLoop PCF Dashboard 데모 영상](https://img.youtube.com/vi/joyh6NbI-yw/hqdefault.jpg)](https://youtu.be/joyh6NbI-yw)
 
-_(녹화 후 위 경로/링크로 첨부 예정)_
+> 위 썸네일을 클릭하면 YouTube에서 데모 영상이 재생됩니다 — https://youtu.be/joyh6NbI-yw
 
 ---
 
@@ -238,5 +256,3 @@ _(녹화 후 위 경로/링크로 첨부 예정)_
 - [docs/PLANNING.md](docs/PLANNING.md) — 구현 전략·데이터 모델·디렉토리·trade-off
 - [docs/DESIGN_HANDOFF.md](docs/DESIGN_HANDOFF.md) — 디자인 통합 핸드오프 계약(동결 props·토큰)
 - [SESSION_LOG.md](SESSION_LOG.md) — 세션별 진행 상태 기록
-</content>
-</invoke>
